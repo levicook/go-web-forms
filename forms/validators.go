@@ -18,76 +18,85 @@ var (
 )
 
 type Validator interface {
-	Validate(in string, vals valueMap) (out string, err error)
+	Validate(val Value, vals valueMap) error
 }
 
-type ValidatorFunc func(string, valueMap) (string, error)
+type ValidatorFunc func(Value, valueMap) error
 
-func (f ValidatorFunc) Validate(in string, vals valueMap) (out string, err error) {
-	return f(in, vals)
+func (f ValidatorFunc) Validate(val Value, vals valueMap) error {
+	return f(val, vals)
 }
 
-// TODO Range based validations
-//type Range interface {
-//  Start() interface{}
-//  End() interface{}
-//  Include(interface{}) bool
-//}
+func presenceValidator(val Value, vals valueMap) error {
 
-func presenceValidator(in string, vals valueMap) (string, error) {
-	if len(in) == 0 {
-		return in, PresenceError
+	if len(val.In) == 0 {
+		return PresenceError
 	}
-	if len(strings.TrimSpace(in)) == 0 {
-		return in, PresenceError
+
+	if len(strings.TrimSpace(val.In)) == 0 {
+		return PresenceError
 	}
-	return in, nil
+
+	return nil
 }
 
-func numericValidator(in string, vals valueMap) (string, error) {
-	if _, e := strconv.ParseFloat(in, 64); e != nil {
-		return in, NumericError
+func numericValidator(val Value, vals valueMap) error {
+
+	if _, e := strconv.ParseFloat(val.In, 64); e != nil {
+		return NumericError
 	}
-	return in, nil
+
+	return nil
+}
+
+// TODO InclusionValidator // in a set
+// TODO ExclusionValidator // not in a set
+
+// TODO func TimeValidator
+// TODO func MinTimeValidator
+// TODO func MaxTimeValidator
+
+// TODO func DurationValidator
+
+// TODO func BetweenLengthValidator(min max int, inclusive bool) ??
+
+func MinLengthValidator(min int, emptyOk bool) ValidatorFunc {
+	return func(val Value, vals valueMap) error {
+
+		if emptyOk && val.In == "" {
+			return nil
+		}
+
+		if len(val.In) < min {
+			m := fmt.Sprintf("is too short (minimum is %v characters)", min)
+			return errors.New(m)
+		}
+
+		return nil
+	}
 }
 
 func MaxLengthValidator(max int) ValidatorFunc {
-	return func(in string, vals valueMap) (string, error) {
+	return func(val Value, vals valueMap) error {
 
-		if len(in) > max {
+		if len(val.In) > max {
 			m := fmt.Sprintf("is too long (maximum is %v characters)", max)
-			return in, errors.New(m)
+			return errors.New(m)
 		}
 
-		return in, nil
-	}
-}
-
-func MinLengthValidator(min int, emptyOk bool) ValidatorFunc {
-	return func(in string, vals valueMap) (string, error) {
-
-		if emptyOk && in == "" {
-			return in, nil
-		}
-
-		if len(in) < min {
-			m := fmt.Sprintf("is too short (minimum is %v characters)", min)
-			return in, errors.New(m)
-		}
-
-		return in, nil
+		return nil
 	}
 }
 
 func ConfirmationValidator(fldName string) ValidatorFunc {
-	return func(in string, vals valueMap) (string, error) {
+	return func(val Value, vals valueMap) error {
 
 		cf := fmt.Sprintf("%v_confirmation", fldName)
 
-		if v, _ := vals[cf]; v != in {
-			return in, ConfirmationError
+		if v, _ := vals[cf]; v.In != val.In {
+			return ConfirmationError
 		}
 
-		return in, nil
+		return nil
 	}
 }

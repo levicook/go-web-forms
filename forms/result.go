@@ -1,9 +1,17 @@
 package forms
 
-type valueMap map[string]string
-type errorMap map[string]error
+type (
+	Value struct {
+		In string
+		Go interface{}
+	}
 
-type Result struct {
-	Values valueMap
-	Errors errorMap
-}
+	valueMap map[string]Value
+
+	errorMap map[string]error
+
+	Result struct {
+		Values valueMap
+		Errors errorMap
+	}
+)

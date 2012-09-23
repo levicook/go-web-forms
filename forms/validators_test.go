@@ -31,7 +31,7 @@ func TestPresenceValidator(t *testing.T) {
 			t.Fatalf("Expected %v. Got %v - in: %#v", PresenceError, e, in)
 		}
 
-		if v, ok := res.Values[name]; !ok || v != in {
+		if v, ok := res.Values[name]; !ok || v.In != in {
 			t.Fatalf("Expected %v. Got %v", in, v)
 		}
 	}
@@ -44,7 +44,7 @@ func TestPresenceValidator(t *testing.T) {
 			t.Fatalf("Got %#v", e)
 		}
 
-		if v, _ := res.Values[name]; v != in {
+		if v, _ := res.Values[name]; v.In != in {
 			t.Fatalf("Expected %v. Got %v", in, v)
 		}
 	}
@@ -70,7 +70,7 @@ func TestNumericValidator(t *testing.T) {
 			t.Fatalf("Expected %v. Got %v - in: %#v", NumericError, e, in)
 		}
 
-		if v, ok := res.Values[name]; !ok || v != in {
+		if v, ok := res.Values[name]; !ok || v.In != in {
 			t.Fatalf("Expected %#v. Got %#v", in, v)
 		}
 	}
@@ -83,7 +83,7 @@ func TestNumericValidator(t *testing.T) {
 			t.Fatalf("Got %#v", e)
 		}
 
-		if v, _ := res.Values[name]; v != in {
+		if v, _ := res.Values[name]; v.In != in {
 			t.Fatalf("Expected %v. Got %v", in, v)
 		}
 	}
@@ -110,7 +110,7 @@ func TestMaxLengthValidator(t *testing.T) {
 			t.Fatalf("Got %v - in: %v", e, in)
 		}
 
-		if v, ok := res.Values[name]; !ok || v != in {
+		if v, ok := res.Values[name]; !ok || v.In != in {
 			t.Fatalf("Expected %#v. Got %#v", in, v)
 		}
 	}
@@ -123,7 +123,7 @@ func TestMaxLengthValidator(t *testing.T) {
 			t.Fatalf("Got %#v - in: %v", e, in)
 		}
 
-		if v, _ := res.Values[name]; v != in {
+		if v, _ := res.Values[name]; v.In != in {
 			t.Fatalf("Expected %v. Got %v", in, v)
 		}
 	}
@@ -150,7 +150,7 @@ func TestMinLengthValidator(t *testing.T) {
 			t.Fatalf("Got %v - in: %v", e, in)
 		}
 
-		if v, ok := res.Values[name]; !ok || v != in {
+		if v, ok := res.Values[name]; !ok || v.In != in {
 			t.Fatalf("Expected %#v. Got %#v", in, v)
 		}
 	}
@@ -163,7 +163,7 @@ func TestMinLengthValidator(t *testing.T) {
 			t.Fatalf("Got %#v - in: %v", e, in)
 		}
 
-		if v, _ := res.Values[name]; v != in {
+		if v, _ := res.Values[name]; v.In != in {
 			t.Fatalf("Expected %v. Got %v", in, v)
 		}
 	}
@@ -189,7 +189,7 @@ func TestConfirmationOfValidator(t *testing.T) {
 		t.Fatalf("Got %#v", e)
 	}
 
-	if v, _ := res.Values["password"]; v != "secret" {
+	if v, _ := res.Values["password"]; v.In != "secret" {
 		t.Fatalf("Got %v", v)
 	}
 
@@ -197,7 +197,7 @@ func TestConfirmationOfValidator(t *testing.T) {
 		t.Fatalf("Got %#v", e)
 	}
 
-	if v, _ := res.Values["password_confirmation"]; v != "secret" {
+	if v, _ := res.Values["password_confirmation"]; v.In != "secret" {
 		t.Fatalf("Got %v", v)
 	}
 
@@ -211,7 +211,7 @@ func TestConfirmationOfValidator(t *testing.T) {
 		t.Fatalf("Got %v", e)
 	}
 
-	if v, _ := res.Values["password"]; v != "secret" {
+	if v, _ := res.Values["password"]; v.In != "secret" {
 		t.Fatalf("Got %v", v)
 	}
 
@@ -219,7 +219,7 @@ func TestConfirmationOfValidator(t *testing.T) {
 		t.Fatalf("Got %#v", e)
 	}
 
-	if v, _ := res.Values["password_confirmation"]; v != "secrets" {
+	if v, _ := res.Values["password_confirmation"]; v.In != "secrets" {
 		t.Fatalf("Got %v", v)
 	}
 }
