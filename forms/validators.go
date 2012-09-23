@@ -53,7 +53,11 @@ func MaxLengthValidator(max int) ValidatorFunc {
 }
 
 func MinLengthValidator(min int) ValidatorFunc {
-	return func(in string) (out string, err error) {
-		return
+	return func(in string) (string, error) {
+		if len(in) < min {
+			m := fmt.Sprintf("is too short (minimum is %v characters)", min)
+			return in, errors.New(m)
+		}
+		return in, nil
 	}
 }

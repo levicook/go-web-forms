@@ -125,3 +125,42 @@ func TestMaxLengthValidator(t *testing.T) {
 		}
 	}
 }
+
+func TestMinLengthValidator(t *testing.T) {
+	const name = "password"
+
+	frm := &Form{
+		Fields{
+			{
+				Name:       name,
+				Validators: Validators{MinLengthValidator(2)},
+			},
+		}}
+
+	badInputs := []string{empty, space, tab, "1"}
+	for _, in := range badInputs {
+		res := frm.Load(httpRequest(url.Values{name: {in}}))
+
+		m := "is too short (minimum is 2 characters)"
+		if e, ok := res.Errors[name]; !ok || e.Error() != m {
+			t.Fatalf("Got %v - in: %v", e, in)
+		}
+
+		if v, ok := res.Values[name]; !ok || v != in {
+			t.Fatalf("Expected %#v. Got %#v", in, v)
+		}
+	}
+
+	goodInputs := []string{"22", "333"}
+	for _, in := range goodInputs {
+		res := frm.Load(httpRequest(url.Values{name: {in}}))
+
+		if e, _ := res.Errors[name]; e != nil {
+			t.Fatalf("Got %#v - in: %v", e, in)
+		}
+
+		if v, _ := res.Values[name]; v != in {
+			t.Fatalf("Expected %v. Got %v", in, v)
+		}
+	}
+}
