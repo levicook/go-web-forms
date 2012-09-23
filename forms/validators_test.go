@@ -15,15 +15,15 @@ func TestPresenceValidator(t *testing.T) {
 	const name = "username"
 
 	frm := &Form{
-		Fields: Fields{
+		Fields{
 			{
 				Name:       name,
 				Validators: Validators{PresenceValidator},
 			},
 		}}
 
-	inputs := []string{empty, space, tab}
-	for _, in := range inputs {
+	badInputs := []string{empty, space, tab}
+	for _, in := range badInputs {
 		res := frm.Load(httpRequest(url.Values{name: {in}}))
 
 		if e, ok := res.Errors[name]; !ok || e != PresenceError {
@@ -34,21 +34,34 @@ func TestPresenceValidator(t *testing.T) {
 			t.Fatalf("Expected %v. Got %v", in, v)
 		}
 	}
+
+	goodInputs := []string{"a", "aa", "a b c"}
+	for _, in := range goodInputs {
+		res := frm.Load(httpRequest(url.Values{name: {in}}))
+
+		if e, _ := res.Errors[name]; e != nil {
+			t.Fatalf("Got %#v", e)
+		}
+
+		if v, _ := res.Values[name]; v != in {
+			t.Fatalf("Expected %v. Got %v", in, v)
+		}
+	}
 }
 
 func TestNumericValidator(t *testing.T) {
 	const name = "age"
 
 	frm := &Form{
-		Fields: Fields{
+		Fields{
 			{
 				Name:       name,
 				Validators: Validators{NumericValidator},
 			},
 		}}
 
-	inputs := []string{empty, space, tab, "a"}
-	for _, in := range inputs {
+	badInputs := []string{empty, space, tab, "a"}
+	for _, in := range badInputs {
 		res := frm.Load(httpRequest(url.Values{name: {in}}))
 
 		if e, ok := res.Errors[name]; !ok || e != NumericError {
@@ -57,6 +70,19 @@ func TestNumericValidator(t *testing.T) {
 
 		if v, ok := res.Values[name]; !ok || v != in {
 			t.Fatalf("Expected %#v. Got %#v", in, v)
+		}
+	}
+
+	goodInputs := []string{"1", "11", "1.1", "111"}
+	for _, in := range goodInputs {
+		res := frm.Load(httpRequest(url.Values{name: {in}}))
+
+		if e, _ := res.Errors[name]; e != nil {
+			t.Fatalf("Got %#v", e)
+		}
+
+		if v, _ := res.Values[name]; v != in {
+			t.Fatalf("Expected %v. Got %v", in, v)
 		}
 	}
 }

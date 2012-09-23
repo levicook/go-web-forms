@@ -2,6 +2,7 @@ package forms
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 )
 
@@ -33,9 +34,11 @@ func presenceValidator(in string) (string, error) {
 	return in, nil
 }
 
-func numericValidator(in string) (out string, err error) {
-	out, err = in, NumericError
-	return
+func numericValidator(in string) (string, error) {
+	if _, e := strconv.ParseFloat(in, 64); e != nil {
+		return in, NumericError
+	}
+	return in, nil
 }
 
 func MaxLengthValidator(min int) ValidatorFunc {
