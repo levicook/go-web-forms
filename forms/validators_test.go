@@ -86,3 +86,42 @@ func TestNumericValidator(t *testing.T) {
 		}
 	}
 }
+
+func TestMaxLengthValidator(t *testing.T) {
+	const name = "tweet"
+
+	frm := &Form{
+		Fields{
+			{
+				Name:       name,
+				Validators: Validators{MaxLengthValidator(2)},
+			},
+		}}
+
+	badInputs := []string{"   ", "123"}
+	for _, in := range badInputs {
+		res := frm.Load(httpRequest(url.Values{name: {in}}))
+
+		m := "is too long (maximum is 2 characters)"
+		if e, ok := res.Errors[name]; !ok || e.Error() != m {
+			t.Fatalf("Got %v - in: %v", e, in)
+		}
+
+		if v, ok := res.Values[name]; !ok || v != in {
+			t.Fatalf("Expected %#v. Got %#v", in, v)
+		}
+	}
+
+	goodInputs := []string{empty, space, tab, "1", "22"}
+	for _, in := range goodInputs {
+		res := frm.Load(httpRequest(url.Values{name: {in}}))
+
+		if e, _ := res.Errors[name]; e != nil {
+			t.Fatalf("Got %#v - in: %v", e, in)
+		}
+
+		if v, _ := res.Values[name]; v != in {
+			t.Fatalf("Expected %v. Got %v", in, v)
+		}
+	}
+}

@@ -2,6 +2,7 @@ package forms
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -41,9 +42,13 @@ func numericValidator(in string) (string, error) {
 	return in, nil
 }
 
-func MaxLengthValidator(min int) ValidatorFunc {
-	return func(in string) (out string, err error) {
-		return
+func MaxLengthValidator(max int) ValidatorFunc {
+	return func(in string) (string, error) {
+		if len(in) > max {
+			m := fmt.Sprintf("is too long (maximum is %v characters)", max)
+			return in, errors.New(m)
+		}
+		return in, nil
 	}
 }
 
