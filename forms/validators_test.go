@@ -17,8 +17,9 @@ func TestPresenceValidator(t *testing.T) {
 	frm := &Form{
 		Fields{
 			{
-				Name:       name,
-				Validators: Validators{PresenceValidator},
+				Name: name,
+				Validators: Validators{
+					PresenceValidator},
 			},
 		}}
 
@@ -55,8 +56,9 @@ func TestNumericValidator(t *testing.T) {
 	frm := &Form{
 		Fields{
 			{
-				Name:       name,
-				Validators: Validators{NumericValidator},
+				Name: name,
+				Validators: Validators{
+					NumericValidator},
 			},
 		}}
 
@@ -93,8 +95,9 @@ func TestMaxLengthValidator(t *testing.T) {
 	frm := &Form{
 		Fields{
 			{
-				Name:       name,
-				Validators: Validators{MaxLengthValidator(2)},
+				Name: name,
+				Validators: Validators{
+					MaxLengthValidator(2)},
 			},
 		}}
 
@@ -132,12 +135,13 @@ func TestMinLengthValidator(t *testing.T) {
 	frm := &Form{
 		Fields{
 			{
-				Name:       name,
-				Validators: Validators{MinLengthValidator(2)},
+				Name: name,
+				Validators: Validators{
+					MinLengthValidator(2, true)},
 			},
 		}}
 
-	badInputs := []string{empty, space, tab, "1"}
+	badInputs := []string{space, tab, "1"}
 	for _, in := range badInputs {
 		res := frm.Load(httpRequest(url.Values{name: {in}}))
 
@@ -151,7 +155,7 @@ func TestMinLengthValidator(t *testing.T) {
 		}
 	}
 
-	goodInputs := []string{"22", "333"}
+	goodInputs := []string{empty, "22", "333"}
 	for _, in := range goodInputs {
 		res := frm.Load(httpRequest(url.Values{name: {in}}))
 

@@ -44,20 +44,28 @@ func numericValidator(in string) (string, error) {
 
 func MaxLengthValidator(max int) ValidatorFunc {
 	return func(in string) (string, error) {
+
 		if len(in) > max {
 			m := fmt.Sprintf("is too long (maximum is %v characters)", max)
 			return in, errors.New(m)
 		}
+
 		return in, nil
 	}
 }
 
-func MinLengthValidator(min int) ValidatorFunc {
+func MinLengthValidator(min int, emptyOk bool) ValidatorFunc {
 	return func(in string) (string, error) {
+
+		if emptyOk && in == "" {
+			return in, nil
+		}
+
 		if len(in) < min {
 			m := fmt.Sprintf("is too short (minimum is %v characters)", min)
 			return in, errors.New(m)
 		}
+
 		return in, nil
 	}
 }
