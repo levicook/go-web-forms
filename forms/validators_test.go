@@ -168,3 +168,58 @@ func TestMinLengthValidator(t *testing.T) {
 		}
 	}
 }
+
+func TestConfirmationOfValidator(t *testing.T) {
+
+	frm := &Form{
+		Fields{{
+			Name:       "password",
+			Validators: Validators{ConfirmationValidator("password")}}, {
+			Name:       "password_confirmation",
+			Validators: Validators{}},
+		}}
+
+	// goodInputs
+	res := frm.Load(httpRequest(url.Values{
+		"password":              {"secret"},
+		"password_confirmation": {"secret"},
+	}))
+
+	if e, _ := res.Errors["password"]; e != nil {
+		t.Fatalf("Got %#v", e)
+	}
+
+	if v, _ := res.Values["password"]; v != "secret" {
+		t.Fatalf("Got %v", v)
+	}
+
+	if e, _ := res.Errors["password_confirmation"]; e != nil {
+		t.Fatalf("Got %#v", e)
+	}
+
+	if v, _ := res.Values["password_confirmation"]; v != "secret" {
+		t.Fatalf("Got %v", v)
+	}
+
+	// badInputs
+	res = frm.Load(httpRequest(url.Values{
+		"password":              {"secret"},
+		"password_confirmation": {"secrets"},
+	}))
+
+	if e, _ := res.Errors["password"]; e != ConfirmationError {
+		t.Fatalf("Got %v", e)
+	}
+
+	if v, _ := res.Values["password"]; v != "secret" {
+		t.Fatalf("Got %v", v)
+	}
+
+	if e, _ := res.Errors["password_confirmation"]; e != nil {
+		t.Fatalf("Got %#v", e)
+	}
+
+	if v, _ := res.Values["password_confirmation"]; v != "secrets" {
+		t.Fatalf("Got %v", v)
+	}
+}

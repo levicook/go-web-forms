@@ -8,11 +8,11 @@ type Field struct {
 	Converter  Converter
 }
 
-func (fld *Field) Validate(in string, frm *Form) (out string, err error) {
+func (fld *Field) Validate(in string, vals valueMap) (out string, err error) {
 	out = in
 
 	for _, v := range fld.Validators {
-		out, err = v.Validate(in, frm)
+		out, err = v.Validate(in, vals)
 		if err != nil {
 			return
 		}
