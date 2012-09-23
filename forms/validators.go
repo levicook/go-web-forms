@@ -16,16 +16,23 @@ var (
 )
 
 type Validator interface {
-	Validate(in string) (out string, err error)
+	Validate(in string, frm *Form) (out string, err error)
 }
 
-type ValidatorFunc func(string) (string, error)
+type ValidatorFunc func(string, *Form) (string, error)
 
-func (f ValidatorFunc) Validate(in string) (out string, err error) {
-	return f(in)
+func (f ValidatorFunc) Validate(in string, frm *Form) (out string, err error) {
+	return f(in, frm)
 }
 
-func presenceValidator(in string) (string, error) {
+// TODO Range based validations
+//type Range interface {
+//  Start() interface{}
+//  End() interface{}
+//  Include(interface{}) bool
+//}
+
+func presenceValidator(in string, frm *Form) (string, error) {
 	if len(in) == 0 {
 		return in, PresenceError
 	}
@@ -35,7 +42,7 @@ func presenceValidator(in string) (string, error) {
 	return in, nil
 }
 
-func numericValidator(in string) (string, error) {
+func numericValidator(in string, frm *Form) (string, error) {
 	if _, e := strconv.ParseFloat(in, 64); e != nil {
 		return in, NumericError
 	}
@@ -43,7 +50,7 @@ func numericValidator(in string) (string, error) {
 }
 
 func MaxLengthValidator(max int) ValidatorFunc {
-	return func(in string) (string, error) {
+	return func(in string, frm *Form) (string, error) {
 
 		if len(in) > max {
 			m := fmt.Sprintf("is too long (maximum is %v characters)", max)
@@ -55,7 +62,7 @@ func MaxLengthValidator(max int) ValidatorFunc {
 }
 
 func MinLengthValidator(min int, emptyOk bool) ValidatorFunc {
-	return func(in string) (string, error) {
+	return func(in string, frm *Form) (string, error) {
 
 		if emptyOk && in == "" {
 			return in, nil

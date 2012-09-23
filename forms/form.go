@@ -19,7 +19,7 @@ nextfield:
 		vals[fld.Name] = req.FormValue(fld.Name)
 
 		// validate the input
-		_, err := fld.Validate(vals[fld.Name])
+		_, err := fld.Validate(vals[fld.Name], frm)
 		if err != nil {
 			errs[fld.Name] = err
 			continue nextfield
