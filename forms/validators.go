@@ -17,11 +17,13 @@ var (
 	ConfirmationError error = errors.New("doesn't match confirmation")
 )
 
-type Validator interface {
-	Validate(val Value, vals valueMap) error
-}
+type (
+	Validator interface {
+		Validate(val Value, vals valueMap) error
+	}
 
-type ValidatorFunc func(Value, valueMap) error
+	ValidatorFunc func(Value, valueMap) error
+)
 
 func (f ValidatorFunc) Validate(val Value, vals valueMap) error {
 	return f(val, vals)

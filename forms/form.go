@@ -2,11 +2,13 @@ package forms
 
 import "net/http"
 
-type Fields []Field
+type (
+	Fields []Field
 
-type Form struct {
-	Fields Fields
-}
+	Form struct {
+		Fields Fields
+	}
+)
 
 func (frm *Form) Load(req *http.Request) *Result {
 	vals := make(valueMap)

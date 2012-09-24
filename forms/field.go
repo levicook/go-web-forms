@@ -1,12 +1,14 @@
 package forms
 
-type Validators []Validator
+type (
+	Validators []Validator
 
-type Field struct {
-	Name       string
-	Validators Validators
-	Converter  Converter
-}
+	Field struct {
+		Name       string
+		Validators Validators
+		Converter  Converter
+	}
+)
 
 func (fld *Field) Validate(val Value, vals valueMap) (err error) {
 
